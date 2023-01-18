@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"gorm_learn"
 )
 
 type STUDENT struct {
@@ -21,24 +19,10 @@ type STUDENT struct {
 func (STUDENT) TableName() string {
 	return "STUDENT"
 }
-func ToJsonString(T any) string {
-	jsonBytes, _ := json.Marshal(T)
-	return string(jsonBytes)
-}
-
-// CreateDB 获取DB对象
-func CreateDB() *gorm.DB {
-	dsn := "username:password@@tcp(url)/STUDENTDB?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err)
-	}
-	return db
-}
 
 // InsertInto 添加元素
 func InsertInto() int64 {
-	db := CreateDB()
+	db := Utils.CreateDB()
 	student := STUDENT{
 		SNO:    "123",
 		SNAME:  "456",
@@ -55,33 +39,34 @@ func InsertInto() int64 {
 
 // SelectLimit SelectOne SELECT * FROM users ORDER BY id LIMIT 1;
 func SelectLimit() {
-	db := CreateDB()
+	db := Utils.CreateDB()
 	var student STUDENT
 	db.First(&student)
-	println(ToJsonString(student))
+	println(Utils.ToJsonString(student))
 
 }
 
 // SelectOne SELECT * FROM users LIMIT 1;
 func SelectOne() {
-	db := CreateDB()
+	db := Utils.CreateDB()
 	var student STUDENT
 	db.Take(&student)
-	fmt.Println(ToJsonString(student))
+	fmt.Println(Utils.ToJsonString(student))
 
 }
 
 // SelectAll SELECT * FROM users
 // 声明一个数组，调用find方法就可以查询到所有信息
 func SelectAll() {
-	db := CreateDB()
+	db := Utils.CreateDB()
 	var students []STUDENT
 	db.Find(&students)
-	fmt.Println(ToJsonString(students))
+	fmt.Println(Utils.ToJsonString(students))
 }
+
 func main() {
 	//InsertInto()
 	//SelectLimit()
 	//SelectOne()
-	//SelectAll()
+	SelectAll()
 }
