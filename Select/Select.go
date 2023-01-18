@@ -1,12 +1,15 @@
-package main
+package Select
 
 import (
 	"fmt"
-	"gorm_learn"
+	"gorm_learn/utils"
 )
 
+// 获取数据库连接对象
+var db = utils.CreateDB()
+
 type STUDENT struct {
-	SNO    string `gorm:"column:SNO"`
+	SNO    string `gorm:"column:SNO;primaryKey"`
 	SNAME  string `gorm:"column:SNAME"`
 	SSEX   string `gorm:"column:SSEX"`
 	SMAJOR string `gorm:"column:SMAJOR"`
@@ -22,7 +25,6 @@ func (STUDENT) TableName() string {
 
 // InsertInto 添加元素
 func InsertInto() int64 {
-	db := Utils.CreateDB()
 	student := STUDENT{
 		SNO:    "123",
 		SNAME:  "456",
@@ -39,34 +41,38 @@ func InsertInto() int64 {
 
 // SelectLimit SelectOne SELECT * FROM users ORDER BY id LIMIT 1;
 func SelectLimit() {
-	db := Utils.CreateDB()
 	var student STUDENT
 	db.First(&student)
-	println(Utils.ToJsonString(student))
+	println(utils.ToJsonString(student))
 
 }
 
 // SelectOne SELECT * FROM users LIMIT 1;
 func SelectOne() {
-	db := Utils.CreateDB()
 	var student STUDENT
 	db.Take(&student)
-	fmt.Println(Utils.ToJsonString(student))
+	fmt.Println(utils.ToJsonString(student))
 
 }
 
 // SelectAll SELECT * FROM users
 // 声明一个数组，调用find方法就可以查询到所有信息
 func SelectAll() {
-	db := Utils.CreateDB()
 	var students []STUDENT
 	db.Find(&students)
-	fmt.Println(Utils.ToJsonString(students))
+	fmt.Println(utils.ToJsonString(students))
 }
 
-func main() {
-	//InsertInto()
-	//SelectLimit()
-	//SelectOne()
-	SelectAll()
+// StringConditionSelect Select * from STUDENT where SNO = '123' and SNAME = '456'
+func StringConditionSelect() {
+	var students []STUDENT
+	db.Where("SNO = ? AND SNAME = ?", "123", "456").Find(&students)
+	fmt.Println(utils.ToJsonString(students))
+}
+
+// SelectRow Select SNO,SNAME from STUDENT
+func SelectRow() {
+	var students []STUDENT
+	db.Select("SNO", "SNAME").Find(&students)
+	fmt.Println(utils.ToJsonString(students))
 }
